@@ -7,17 +7,18 @@ type DayInsightProps = {
 export default function DayInsight({ insight }: DayInsightProps) {
   return (
     <div
-      className="card animate-fade-in p-6"
+      className="card animate-fade-in p-5 sm:p-6"
       style={{
-        background:
-          "linear-gradient(135deg, #F0EBFF 0%, #E8FAF3 50%, var(--card) 100%)",
-        borderColor: "#B9A7FF55",
+        borderColor: "rgba(185,167,255,0.5)",
+        background: "linear-gradient(90deg, rgba(185,167,255,0.18), transparent 80%)",
+        boxShadow: "0 8px 24px rgba(185,167,255,0.25)",
       }}
     >
-      <p className="text-xs font-semibold uppercase tracking-wide text-[#8B7AB8]">
+      <p className="text-xs font-extrabold uppercase tracking-widest text-[var(--muted)]">
         Инсайт дня
       </p>
-      <p className="mt-3 text-lg font-semibold leading-snug text-[var(--foreground)]">
+
+      <p className="mt-3 text-lg font-extrabold leading-snug text-[var(--foreground)]">
         {insight}
       </p>
     </div>

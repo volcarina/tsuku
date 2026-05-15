@@ -50,12 +50,12 @@ export default function ExpenseForm({ onSubmit, pulse = false }: ExpenseFormProp
   return (
     <form
       onSubmit={handleSubmit}
-      className={`card p-6 transition duration-200 ${pulse ? "animate-pulse-soft" : ""}`}
+      className={`card card-interactive p-5 transition duration-200 sm:p-6 ${pulse ? "animate-pulse-soft" : ""}`}
     >
-      <h2 className="text-lg font-semibold text-[var(--foreground)]">
+      <h2 className="text-lg font-extrabold text-[var(--foreground)]">
         Добавить расход
       </h2>
-      <p className="mt-1 text-sm text-[var(--muted)]">
+      <p className="mt-1 text-sm font-medium text-[var(--muted)]">
         Отметьте эмоцию — это влияет на аналитику дня.
       </p>
 
@@ -129,7 +129,7 @@ export default function ExpenseForm({ onSubmit, pulse = false }: ExpenseFormProp
         </p>
       )}
 
-      <button type="submit" disabled={isSubmitting} className="btn-primary mt-6 w-full">
+      <button type="submit" disabled={isSubmitting} className="btn-primary ripple mt-6 w-full">
         {isSubmitting ? "Добавление…" : "Добавить расход"}
       </button>
     </form>

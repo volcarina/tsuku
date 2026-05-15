@@ -10,10 +10,9 @@ export default function ThemeToggle() {
       <button
         type="button"
         disabled
-        className="inline-flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--muted)]"
+        className="btn-ghost px-3 py-2 text-[var(--muted)]"
       >
-        <span>◐</span>
-        <span>Тема</span>
+        ◐ Тема
       </button>
     );
   }
@@ -22,10 +21,12 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="inline-flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-3 py-2 text-sm font-semibold transition duration-200 hover:scale-105 hover:border-[var(--active)]"
+      className="btn-ghost ripple flex items-center gap-2 px-3 py-2"
     >
       <span>{theme === "light" ? "🌙" : "☀️"}</span>
-      <span>{theme === "light" ? "Тёмная" : "Светлая"}</span>
+      <span className="font-extrabold">
+        {theme === "light" ? "Тёмная" : "Светлая"}
+      </span>
     </button>
   );
 }

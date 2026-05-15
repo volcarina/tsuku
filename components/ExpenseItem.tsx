@@ -37,43 +37,55 @@ export default function ExpenseItem({
 
   return (
     <li
-      className="rounded-2xl border px-4 py-3 shadow-sm transition duration-200 hover:scale-[1.01]"
+      className={`rounded-2xl border-2 px-4 py-3 transition-all duration-250 ${
+        isDeleting ? "animate-shrink-fade" : "hover:scale-[1.03] card-interactive"
+      }`}
       style={{
-        borderColor: `${meta.color}88`,
-        background: `linear-gradient(135deg, ${meta.soft}, var(--card))`,
-        boxShadow: `0 8px 24px ${meta.color}22`,
+        borderColor: `${meta.color}99`,
+        background: `linear-gradient(135deg, ${meta.soft} 0%, var(--card) 70%)`,
+        boxShadow: isDeleting
+          ? undefined
+          : `0 8px 28px ${meta.color}40, inset 0 1px 0 rgb(255 255 255 / 0.5)`,
       }}
     >
       <div className="flex flex-wrap items-start gap-3 sm:flex-nowrap">
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold text-[var(--foreground)]">
+          <p className="truncate text-base font-extrabold text-[var(--foreground)]">
             {expense.title}
           </p>
-          <p className="mt-0.5 text-xs text-[var(--muted)]">
+          <p className="mt-0.5 text-xs font-semibold text-[var(--muted)]">
             {formatDate(expense.createdAt)} · {expense.category}
           </p>
         </div>
         <span
-          className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold"
-          style={{ backgroundColor: meta.color, color: "#fff" }}
+          className="shrink-0 rounded-full px-2.5 py-1 text-xs font-extrabold shadow-md"
+          style={{
+            backgroundColor: meta.color,
+            color: "#fff",
+            boxShadow: `0 4px 12px ${meta.color}66`,
+          }}
         >
           {meta.label}
         </span>
-        <span className="shrink-0 text-sm font-bold tabular-nums text-[var(--foreground)]">
+        <span className="shrink-0 text-base font-extrabold tabular-nums">
           {formatAmount(expense.amount)}
         </span>
         <button
           type="button"
           onClick={() => onDelete(expense.id)}
           disabled={isDeleting}
-          className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition duration-150 hover:bg-[#FDE8F0] disabled:opacity-50"
-          style={{ color: "#FF6FAE" }}
+          className="ripple shrink-0 rounded-xl border-2 px-3 py-1.5 text-xs font-extrabold transition duration-200 hover:scale-105 disabled:opacity-50"
+          style={{
+            color: "#FF4D9A",
+            borderColor: "#FF4D9A55",
+            background: "#FFE0EC",
+          }}
           aria-label={`Удалить «${expense.title}»`}
         >
-          {isDeleting ? "…" : "Удалить"}
+          {isDeleting ? "…" : "✕"}
         </button>
       </div>
-      <div className="mt-3 border-t border-[var(--card-border)] pt-3">
+      <div className="mt-3 border-t-2 border-[var(--card-border)] pt-3">
         <EmotionalTagPicker
           compact
           value={tag}

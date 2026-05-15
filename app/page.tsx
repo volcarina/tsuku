@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import AnimatedNumber from "@/components/AnimatedNumber";
 import BudgetProgress from "@/components/BudgetProgress";
 import CurrencyToggle from "@/components/CurrencyToggle";
 import DayInsight from "@/components/DayInsight";
@@ -10,7 +11,9 @@ import ExpenseFiltersPanel from "@/components/ExpenseFilters";
 import ExpenseForm from "@/components/ExpenseForm";
 import ExpenseList from "@/components/ExpenseList";
 import OverloadMoments from "@/components/OverloadMoments";
+import StickyActionBar from "@/components/StickyActionBar";
 import ThemeToggle from "@/components/ThemeToggle";
+import TodayVibeCard from "@/components/TodayVibe";
 import { computeAnalytics } from "@/lib/analytics";
 import {
   DEFAULT_USD_RUB_RATE,
@@ -49,6 +52,7 @@ import {
   setStoredCurrency,
   setStoredUsdRate,
 } from "@/lib/storage";
+import { computeTodayVibe } from "@/lib/today-vibe";
 
 type ExpensesResponse = {
   expenses: Expense[];
@@ -60,19 +64,18 @@ function buildTagsMap(expenses: Expense[]): Record<number, EmotionalTagId> {
   const map: Record<number, EmotionalTagId> = {};
 
   for (const expense of expenses) {
-    const key = String(expense.id);
-    map[expense.id] = stored[key] ?? DEFAULT_EMOTIONAL_TAG;
+    map[expense.id] = stored[String(expense.id)] ?? DEFAULT_EMOTIONAL_TAG;
   }
 
   return map;
 }
 
-const BUDGET_TINT: Record<string, string> = {
-  OK: "#7ED6B522",
-  WARNING: "#FFE58A33",
-  OVERBUDGET: "#F7A8C444",
-  NONE: "transparent",
-};
+function scrollToSection(id: string) {
+  document.getElementById(id)?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}
 
 export default function Home() {
   const monthKey = getMonthKey();
@@ -89,6 +92,7 @@ export default function Home() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [formPulse, setFormPulse] = useState(false);
+  const [uiPulse, setUiPulse] = useState(false);
 
   const formatAmount = useCallback(
     (amountRub: number) => formatMoney(amountRub, currency, usdRate),
@@ -129,6 +133,18 @@ export default function Home() {
     () => computeBudgetStatus(analytics.spentThisMonth, budget),
     [analytics.spentThisMonth, budget],
   );
+
+  const todayVibe = useMemo(
+    () => computeTodayVibe(dayState, budgetStatus, todayExpenses.length),
+    [dayState, budgetStatus, todayExpenses.length],
+  );
+
+  const mood =
+    budgetStatus === "OVERBUDGET"
+      ? "overlimit"
+      : budgetStatus === "WARNING"
+        ? "warning"
+        : "ok";
 
   useEffect(() => {
     setBudget(getStoredBudget(monthKey));
@@ -186,6 +202,8 @@ export default function Home() {
 
   function handleBudgetChange(value: number | null) {
     setBudget(value);
+    setUiPulse(true);
+    setTimeout(() => setUiPulse(false), 500);
     if (value === null) {
       clearStoredBudget(monthKey);
       return;
@@ -227,13 +245,18 @@ export default function Home() {
     }
 
     setFormPulse(true);
-    setTimeout(() => setFormPulse(false), 700);
+    setUiPulse(true);
+    setTimeout(() => {
+      setFormPulse(false);
+      setUiPulse(false);
+    }, 800);
 
     await loadExpenses(filters);
   }
 
   async function handleDelete(id: number) {
     setDeletingId(id);
+    await new Promise((resolve) => setTimeout(resolve, 320));
 
     try {
       const response = await fetch(`/api/expenses?id=${id}`, {
@@ -255,100 +278,113 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-full bg-[var(--background)] transition-colors duration-300"
-      style={{
-        backgroundImage: `linear-gradient(180deg, ${BUDGET_TINT[budgetStatus]} 0%, transparent 280px)`,
-      }}
+      className={`app-shell min-h-full transition-all duration-300 ${uiPulse ? "animate-pulse-soft" : ""}`}
+      data-mood={mood}
     >
-      <header className="border-b border-[var(--card-border)] bg-[var(--card)]/90 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm font-bold" style={{ color: "#FF6FAE" }}>
-              TSUKU · дофаминовый трекер
-            </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-              Панель расходов
-            </h1>
-            <p className="mt-1 text-sm text-[var(--muted)]">
-              Эмоции, ритм дня и бюджет в одном месте.
-            </p>
-          </div>
+      <div className="app-content pb-28">
+        <header className="border-b-2 border-[var(--card-border)] bg-[var(--card)]/95 shadow-lg backdrop-blur-md">
+          <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-4 lg:px-5">
+            <div>
+              <p
+                className="text-sm font-extrabold tracking-wide"
+                style={{ color: "#FF4D9A" }}
+              >
+                TSUKU · дофаминовый трекер
+              </p>
+              <h1 className="mt-0.5 text-2xl font-extrabold tracking-tight sm:text-3xl">
+                Панель расходов
+              </h1>
+            </div>
 
-          <div className="flex flex-col gap-3 sm:items-end">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
               <ThemeToggle />
               <CurrencyToggle
                 currency={currency}
                 usdRate={usdRate}
                 onCurrencyChange={handleCurrencyChange}
               />
-            </div>
-            <div className="card card-interactive px-5 py-4 sm:text-right">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-                Итого по фильтрам
-              </p>
-              <p className="mt-1 text-3xl font-bold tabular-nums">
-                {formatAmount(total)}
-              </p>
+              <div className="card card-interactive min-w-[140px] px-4 py-3 sm:text-right">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--muted)]">
+                  Итого
+                </p>
+                <p className="text-2xl font-extrabold tabular-nums">
+                  <AnimatedNumber value={total} format={formatAmount} />
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
-        {fetchError && (
-          <p className="rounded-2xl bg-[#FDE8F0] px-4 py-3 text-sm text-[#C94B7A]">
-            {fetchError}
-          </p>
-        )}
+        <main className="mx-auto max-w-[1400px] space-y-4 px-3 py-4 sm:px-4 lg:px-5">
+          {fetchError && (
+            <p className="animate-fade-in rounded-2xl border-2 border-[#FF4D9A55] bg-[#FFE0EC] px-4 py-3 text-sm font-semibold text-[#C94B7A]">
+              {fetchError}
+            </p>
+          )}
 
-        <DayInsight insight={dayInsight} />
+          <section className="section-zone space-y-3">
+            <TodayVibeCard vibe={todayVibe} />
+            <DayInsight insight={dayInsight} />
+          </section>
 
-        <div className="grid gap-4 lg:grid-cols-3">
-          <DayStateCard state={dayState} />
-          <BudgetProgress
-            spent={analytics.spentThisMonth}
-            budget={budget}
-            status={budgetStatus}
-            formatAmount={formatAmount}
-          />
-          <OverloadMoments
-            moments={overloadMoments}
-            formatAmount={formatAmount}
-          />
-        </div>
+          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <DayStateCard state={dayState} />
+            <BudgetProgress
+              spent={analytics.spentThisMonth}
+              budget={budget}
+              status={budgetStatus}
+              formatAmount={formatAmount}
+            />
+            <OverloadMoments
+              moments={overloadMoments}
+              formatAmount={formatAmount}
+            />
+          </section>
 
-        <ExpenseAnalytics
-          analytics={analytics}
-          monthKey={monthKey}
-          budget={budget}
-          onBudgetChange={handleBudgetChange}
-          formatAmount={formatAmount}
-          currency={currency}
-          usdRate={usdRate}
-          tags={tags}
-          monthExpenses={monthExpenses}
-        />
+          <section id="analytics" className="scroll-mt-20">
+            <ExpenseAnalytics
+              analytics={analytics}
+              monthKey={monthKey}
+              budget={budget}
+              onBudgetChange={handleBudgetChange}
+              formatAmount={formatAmount}
+              currency={currency}
+              usdRate={usdRate}
+              tags={tags}
+              monthExpenses={monthExpenses}
+            />
+          </section>
 
-        <ExpenseFiltersPanel
-          filters={filters}
-          onChange={setFilters}
-          onReset={() => setFilters(emptyFilters)}
-        />
+          <section id="filters" className="scroll-mt-20">
+            <ExpenseFiltersPanel
+              filters={filters}
+              onChange={setFilters}
+              onReset={() => setFilters(emptyFilters)}
+            />
+          </section>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,380px)_1fr]">
-          <ExpenseForm onSubmit={handleAdd} pulse={formPulse} />
-          <ExpenseList
-            expenses={expenses}
-            tags={tags}
-            onTagChange={handleTagChange}
-            onDelete={handleDelete}
-            deletingId={deletingId}
-            isLoading={isLoading}
-            formatAmount={formatAmount}
-          />
-        </div>
-      </main>
+          <section className="grid gap-4 lg:grid-cols-[minmax(0,400px)_1fr]">
+            <div id="add-expense" className="scroll-mt-24">
+              <ExpenseForm onSubmit={handleAdd} pulse={formPulse} />
+            </div>
+            <ExpenseList
+              expenses={expenses}
+              tags={tags}
+              onTagChange={handleTagChange}
+              onDelete={handleDelete}
+              deletingId={deletingId}
+              isLoading={isLoading}
+              formatAmount={formatAmount}
+            />
+          </section>
+        </main>
+      </div>
+
+      <StickyActionBar
+        onAdd={() => scrollToSection("add-expense")}
+        onFilters={() => scrollToSection("filters")}
+        onAnalytics={() => scrollToSection("analytics")}
+      />
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function ExpenseList({
   formatAmount,
 }: ExpenseListProps) {
   return (
-    <section className="card p-6">
+    <section className="card p-4 sm:p-5">
       <div>
         <h2 className="text-lg font-semibold text-[var(--foreground)]">Расходы</h2>
         <p className="mt-1 text-sm text-[var(--muted)]">

@@ -39,7 +39,7 @@ export default function ExpenseAnalytics({
   )[0];
 
   return (
-    <section className="card p-6">
+    <section className="card animate-fade-in p-4 sm:p-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
@@ -150,10 +150,9 @@ export default function ExpenseAnalytics({
               return (
                 <span
                   key={tag.id}
-                  className="chip"
+                  className="chip text-[var(--foreground)]"
                   style={{
                     backgroundColor: tag.soft,
-                    color: "#4a4560",
                     border: `1px solid ${tag.color}55`,
                   }}
                 >
@@ -183,11 +182,11 @@ function StatCard({
 }) {
   return (
     <div
-      className="rounded-2xl border p-4 transition duration-200 hover:scale-[1.02]"
+      className="rounded-2xl border-2 p-4 transition duration-200 hover:scale-[1.05]"
       style={{
         borderColor: `${accent}55`,
         background: highlight
-          ? `linear-gradient(145deg, ${accent}22, var(--card))`
+          ? `linear-gradient(145deg, var(--card), ${accent}18)`
           : "var(--card)",
       }}
     >

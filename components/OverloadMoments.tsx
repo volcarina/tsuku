@@ -12,31 +12,32 @@ export default function OverloadMoments({
   formatAmount,
 }: OverloadMomentsProps) {
   return (
-    <div className="card p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+    <div className="card animate-fade-in stagger-3 p-4 sm:p-5">
+      <p className="text-xs font-extrabold uppercase tracking-widest text-[var(--muted)]">
         Момент перегруза
       </p>
 
       {moments.length === 0 ? (
-        <p className="mt-4 text-sm text-[var(--muted)]">
-          Сегодня без плотных серий трат - спокойный ритм.
+        <p className="mt-4 text-sm font-medium text-[var(--muted)]">
+          Сегодня без плотных серий трат — спокойный ритм ✓
         </p>
       ) : (
-        <ul className="mt-4 space-y-3">
-          {moments.map((moment) => (
+        <ul className="mt-4 space-y-2">
+          {moments.map((moment, i) => (
             <li
               key={`${moment.timeRange}-${moment.label}`}
-              className="rounded-xl border px-4 py-3 transition duration-200 hover:scale-[1.01]"
+              className="animate-slide-in rounded-xl border-2 px-4 py-3 transition duration-200 hover:scale-[1.04]"
               style={{
-                borderColor: `${moment.accent}66`,
-                background: `linear-gradient(90deg, ${moment.accent}22, transparent)`,
-                boxShadow: `0 0 20px ${moment.accent}22`,
+                borderColor: `${moment.accent}88`,
+                background: `linear-gradient(90deg, ${moment.accent}35, transparent 80%)`,
+                boxShadow: `0 8px 24px ${moment.accent}44`,
+                animationDelay: `${i * 0.08}s`,
               }}
             >
-              <p className="text-sm font-semibold text-[var(--foreground)]">
-                {moment.timeRange} - {moment.label}
+              <p className="text-sm font-extrabold text-[var(--foreground)]">
+                {moment.timeRange} — {moment.label}
               </p>
-              <p className="mt-1 text-xs text-[var(--muted)]">
+              <p className="mt-1 text-xs font-semibold text-[var(--muted)]">
                 {moment.count} трат · {formatAmount(moment.total)}
               </p>
             </li>

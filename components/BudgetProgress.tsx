@@ -1,5 +1,6 @@
 "use client";
 
+import AnimatedNumber from "@/components/AnimatedNumber";
 import {
   type BudgetStatus,
   budgetProgressPercent,
@@ -13,15 +14,15 @@ type BudgetProgressProps = {
 };
 
 const STATUS_LABELS: Record<Exclude<BudgetStatus, "NONE">, string> = {
-  OK: "ОК",
+  OK: "OK",
   WARNING: "WARNING",
-  OVERBUDGET: "OVERBUDGET",
+  OVERBUDGET: "OVERLIMIT",
 };
 
 const STATUS_COLORS: Record<Exclude<BudgetStatus, "NONE">, string> = {
-  OK: "#7ED6B5",
-  WARNING: "#FFE58A",
-  OVERBUDGET: "#FF6FAE",
+  OK: "#4FD4A4",
+  WARNING: "#FFD24D",
+  OVERBUDGET: "#FF4D9A",
 };
 
 export default function BudgetProgress({
@@ -40,23 +41,35 @@ export default function BudgetProgress({
         ? "budget-gradient-warning"
         : "budget-gradient-ok";
 
+  const glowClass =
+    status === "OVERBUDGET"
+      ? "budget-bar-glow-over"
+      : status === "WARNING"
+        ? "budget-bar-glow-warning"
+        : "";
+
   return (
-    <div className="card p-5 transition duration-200"
+    <div className="card card-interactive animate-fade-in stagger-2 p-4 transition-all duration-300 sm:p-5"
       style={{
         borderColor:
-          status !== "NONE" ? `${STATUS_COLORS[status]}66` : undefined,
+          status !== "NONE" ? `${STATUS_COLORS[status]}88` : undefined,
+        boxShadow:
+          status !== "NONE"
+            ? `0 12px 36px ${STATUS_COLORS[status]}44, inset 0 1px 0 rgb(255 255 255 / 0.5)`
+            : undefined,
       }}
     >
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+        <p className="text-xs font-extrabold uppercase tracking-widest text-[var(--muted)]">
           Бюджет месяца
         </p>
         {status !== "NONE" && (
           <span
-            className="rounded-full px-2.5 py-0.5 text-xs font-bold"
+            className="rounded-full px-3 py-1 text-xs font-extrabold tracking-wide"
             style={{
               backgroundColor: `${STATUS_COLORS[status]}33`,
               color: STATUS_COLORS[status],
+              boxShadow: `0 0 16px ${STATUS_COLORS[status]}55`,
             }}
           >
             {STATUS_LABELS[status]}
@@ -65,27 +78,37 @@ export default function BudgetProgress({
       </div>
 
       {budget === null ? (
-        <p className="mt-3 text-sm text-[var(--muted)]">
+        <p className="mt-3 text-sm font-medium text-[var(--muted)]">
           Задайте бюджет в аналитике ниже
         </p>
       ) : (
         <>
-          <div className="mt-4 h-3 overflow-hidden rounded-full bg-[var(--background)]">
+          <div className="budget-track mt-4 h-4 overflow-hidden rounded-full">
             <div
-              className={`h-full rounded-full transition-all duration-500 ease-out ${barClass}`}
+              className={`h-full rounded-full transition-all duration-700 ease-out ${barClass} ${glowClass}`}
               style={{ width: `${Math.min(percent, 100)}%` }}
             />
           </div>
-          <div className="mt-3 flex justify-between text-sm">
-            <span className="text-[var(--muted)]">
-              Потрачено: {formatAmount(spent)}
+          <div className="mt-3 flex justify-between gap-2 text-sm">
+            <span className="font-medium text-[var(--muted)]">
+              Потрачено:{" "}
+              <AnimatedNumber
+                value={spent}
+                format={formatAmount}
+                className="font-extrabold text-[var(--foreground)]"
+              />
             </span>
-            <span className="font-semibold text-[var(--foreground)]">
-              {remaining !== null && remaining >= 0
-                ? `Осталось ${formatAmount(remaining)}`
-                : remaining !== null
-                  ? `−${formatAmount(Math.abs(remaining))}`
-                  : "—"}
+            <span className="font-extrabold text-[var(--foreground)]">
+              {remaining !== null && remaining >= 0 ? (
+                <>
+                  Осталось{" "}
+                  <AnimatedNumber value={remaining} format={formatAmount} />
+                </>
+              ) : remaining !== null ? (
+                <>−{formatAmount(Math.abs(remaining))}</>
+              ) : (
+                "—"
+              )}
             </span>
           </div>
         </>

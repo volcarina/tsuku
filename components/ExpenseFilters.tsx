@@ -19,7 +19,7 @@ export default function ExpenseFiltersPanel({
   }
 
   return (
-    <div className="card p-4">
+    <div className="card p-3 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-sm font-semibold text-[var(--foreground)]">Фильтры</h3>
         <button
