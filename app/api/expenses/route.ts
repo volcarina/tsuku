@@ -3,6 +3,7 @@ import {
   createExpenseSchema,
   type Expense,
 } from "@/lib/schema";
+import { endOfDay, startOfDay } from "@/lib/dates";
 
 const expenses: Expense[] = [];
 let nextId = 1;
@@ -11,13 +12,63 @@ function getTotal(list: Expense[]) {
   return list.reduce((sum, expense) => sum + expense.amount, 0);
 }
 
-export async function GET(request: NextRequest) {
-  const category = request.nextUrl.searchParams.get("category");
+function getMonthKeyFromIso(iso: string) {
+  const date = new Date(iso);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${year}-${month}`;
+}
 
-  const filtered =
-    category && category !== "all"
-      ? expenses.filter((expense) => expense.category === category)
-      : expenses;
+function applyFilters(list: Expense[], searchParams: URLSearchParams) {
+  let filtered = list;
+
+  const category = searchParams.get("category");
+  if (category && category !== "all") {
+    filtered = filtered.filter((expense) => expense.category === category);
+  }
+
+  const month = searchParams.get("month");
+  if (month) {
+    filtered = filtered.filter(
+      (expense) => getMonthKeyFromIso(expense.createdAt) === month,
+    );
+  }
+
+  const dateFrom = searchParams.get("dateFrom");
+  if (dateFrom) {
+    const from = startOfDay(dateFrom);
+    filtered = filtered.filter(
+      (expense) => new Date(expense.createdAt) >= from,
+    );
+  }
+
+  const dateTo = searchParams.get("dateTo");
+  if (dateTo) {
+    const to = endOfDay(dateTo);
+    filtered = filtered.filter((expense) => new Date(expense.createdAt) <= to);
+  }
+
+  const minAmount = searchParams.get("minAmount");
+  if (minAmount) {
+    const min = Number(minAmount);
+    if (!Number.isNaN(min)) {
+      filtered = filtered.filter((expense) => expense.amount >= min);
+    }
+  }
+
+  const maxAmount = searchParams.get("maxAmount");
+  if (maxAmount) {
+    const max = Number(maxAmount);
+    if (!Number.isNaN(max)) {
+      filtered = filtered.filter((expense) => expense.amount <= max);
+    }
+  }
+
+  return filtered;
+}
+
+export async function GET(request: NextRequest) {
+  const filtered = applyFilters(expenses, request.nextUrl.searchParams);
 
   return Response.json({
     expenses: filtered,
