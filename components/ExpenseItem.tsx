@@ -38,7 +38,7 @@ export default function ExpenseItem({
   return (
     <li
       className={`rounded-2xl border-2 px-4 py-3 transition-all duration-250 ${
-        isDeleting ? "animate-shrink-fade" : "hover:scale-[1.03] card-interactive"
+        isDeleting ? "animate-shrink-fade" : ""
       }`}
       style={{
         borderColor: `${meta.color}99`,

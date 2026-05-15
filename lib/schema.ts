@@ -12,10 +12,8 @@ export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
 
 export const createExpenseSchema = z.object({
   title: z.string().trim().min(1, "Укажите название"),
-  amount: z.coerce.number().positive("Сумма должна быть больше 0"),
-  category: z.enum(EXPENSE_CATEGORIES, {
-    error: "Выберите категорию",
-  }),
+  amount: z.coerce.number().refine((v) => v > 0, "Сумма должна быть больше 0"),
+  category: z.enum(EXPENSE_CATEGORIES),
 });
 
 export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;

@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📊 Tsuku — дофаминовый трекер расходов
 
-## Getting Started
+Tsuku — веб-приложение для учёта расходов с акцентом на эмоциональное поведение пользователя и визуальную аналитику.
 
-First, run the development server:
+Проект не просто считает траты, а показывает **как и почему ты тратишь деньги**.
+
+---
+
+## 🚀 Демо
+
+(в процессе)
+
+---
+
+## ⚙️ Стек
+
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- Zod
+- LocalStorage
+- CSS Variables
+
+---
+
+## 🎨 Концепция
+
+Tsuku — это “дофаминовый” подход к финансовому трекингу:
+
+- анализ эмоциональных трат
+- визуализация поведения пользователя
+- динамические состояния дня
+- мягкий, но контрастный UI
+- акцент на ощущениях, а не только цифрах
+
+---
+
+## 💸 Основные функции
+
+### 🧾 Учёт расходов
+
+- добавление расходов
+- удаление записей
+- категории
+- фильтрация по дате и параметрам
+- хранение данных в localStorage
+
+---
+
+### 📊 Аналитика
+
+- сумма расходов за месяц
+- средний чек
+- самая крупная трата
+- топ категория
+- остаток бюджета
+- перерасход бюджета
+
+---
+
+### 🧩 Эмоциональные теги
+
+Каждый расход может иметь “состояние”:
+
+- импульсная покупка
+- хочу сейчас
+- надо было
+- баловство
+- осознанно
+- срыв
+
+Теги участвуют в аналитике и формируют поведенческую картину.
+
+---
+
+### 🔥 Состояние дня
+
+Автоматическая оценка поведения за день:
+
+- стабильный день
+- контроль
+- эмоциональные траты
+- перегруз
+- хаос трат
+
+---
+
+### ⚡ Момент перегруза
+
+- выявление серий трат
+- анализ временных интервалов
+- выделение “опасных” периодов
+
+---
+
+### 🧠 Инсайт дня
+
+- один главный вывод на основе данных
+- анализ привычек пользователя
+- простое текстовое резюме дня
+
+---
+
+### 🎯 Вайб дня
+
+- визуальное настроение дня
+- цветовая индикация состояния
+- быстрый эмоциональный срез
+
+---
+
+## 🎨 UI / UX
+
+- минимализм с яркими акцентами
+- мягкие градиенты
+- реактивные состояния интерфейса
+- плавные анимации (150–250ms)
+- адаптация под light/dark mode
+- карточный интерфейс без перегрузки
+
+---
+
+## 🏗️ Архитектура
+
+- Next.js App Router
+- модульная структура компонентов
+- разделение UI / analytics / storage
+- локальная бизнес-логика на фронтенде
+- утилиты для аналитики и работы с данными
+
+---
+
+## 📦 Установка
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/volcarina/tsuku.git
+cd tsuku
+npm install
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

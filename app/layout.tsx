@@ -20,9 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" className={`${nunito.variable} h-full antialiased`}>
+    <html lang="ru" className={`${nunito.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
-        {/* вся client-логика только тут */}
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

@@ -50,7 +50,7 @@ export default function ExpenseForm({ onSubmit, pulse = false }: ExpenseFormProp
   return (
     <form
       onSubmit={handleSubmit}
-      className={`card card-interactive p-5 transition duration-200 sm:p-6 ${pulse ? "animate-pulse-soft" : ""}`}
+      className={`card p-5 transition duration-200 sm:p-6 ${pulse ? "animate-pulse-soft" : ""}`}
     >
       <h2 className="text-lg font-extrabold text-[var(--foreground)]">
         Добавить расход

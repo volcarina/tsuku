@@ -88,8 +88,11 @@ export async function POST(request: Request) {
   const parsed = createExpenseSchema.safeParse(body);
 
   if (!parsed.success) {
+    const flat = parsed.error.flatten();
+    // Zod v4: flat.fieldErrors (v3) was renamed to flat.fields (v4) — normalise both
+    const fieldErrors = (flat as Record<string, unknown>).fieldErrors ?? (flat as Record<string, unknown>).fields ?? {};
     return Response.json(
-      { error: "Ошибка валидации", issues: parsed.error.flatten() },
+      { error: "Ошибка валидации", issues: { fieldErrors } },
       { status: 400 },
     );
   }
